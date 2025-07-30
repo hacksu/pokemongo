@@ -2,7 +2,7 @@ from pprint import pprint
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient("your config")
+client = MongoClient("mongodb://localhost:27017")
 db = client.pokemon
 collection = db.PC
 

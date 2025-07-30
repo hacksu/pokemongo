@@ -1,8 +1,8 @@
 from pymongo import MongoClient
 
-client = MongoClient("your config")
+client = MongoClient("mongodb://localhost:27017")
 db = client.pokemon
-collection = db.PC
+collection = db.pc
 
 result = collection.insert_one({
   "name": "Squinchy",
