@@ -2,23 +2,26 @@ from pprint import pprint
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient("mongodb://localhost:27017")
-db = client.pokemon
-collection = db.PC
+# mongodb credential
+cred="admin:password123"
+client = MongoClient(f"mongodb://{cred}@localhost:27017")
 
-my_id = ObjectId("63868cffb0beba066ce5624c")
-id_query = { "_id": my_id }
+db = client.pokemon
+collection = db.pc
+
+name = "Esther"
+name_query = { "name": name }
 
 print("updating owner...")
 collection.update_one(
-    id_query,
+    name_query,
     {"$set": {"owner": "Mitch"}}
 )
-pprint(collection.find_one(id_query))
+pprint(collection.find_one(name_query))
 
-print("incrementing health...")
+print("\nincrementing health...")
 collection.update_one(
-  id_query,
+  name_query,
   { "$inc": {"hp": 5} }
 )
-pprint(collection.find_one(id_query))
+pprint(collection.find_one(name_query))
