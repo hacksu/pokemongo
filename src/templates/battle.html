@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #f9f7f3, #d1e8ff);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: #ffcb05;
+      color: #2a75bb;
+    }
+
+    .nav-tabs .nav-link {
+      color: #2a75bb;
+    }
+
+    .tab-content {
+      background-color: white;
+      border-radius: 0 0 10px 10px;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+      border-top: none;
+    }
+
+    .navbar {
+      background-color: #ef5350;
+    }
+
+    .navbar-brand {
+      color: white;
+      font-weight: bold;
+    }
+
+    .navbar-brand:hover {
+      color: #ffcb05;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="bi bi-lightning-charge-fill"></i> Pokémon Arena</a>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    {% if red_pokemon and blue_pokemon %}
+      <div class="row mt-5">
+        <div class="col-md-5">
+          <div class="card border-danger">
+            <div class="card-header bg-danger text-white text-center">
+              Your Pokémon
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ red_pokemon.name }}</h5>
+              <p class="card-text">Species: {{ red_pokemon.species }}</p>
+              <p class="card-text">❤️ HP: {{ red_pokemon.hp }}</p>
+              <p class="card-text">⭐ XP: {{ red_pokemon.xp }}</p>
+              <p class="card-text">😄 Mood: {{ red_pokemon.mood }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-2 d-flex align-items-center justify-content-center">
+          <form method="POST" action="/results" class="d-grid gap-2">
+            <!-- Hidden fields -->
+            <input type="hidden" name="red_pokemon" value="{{ red_pokemon.name }}">
+            <input type="hidden" name="blue_pokemon" value="{{ blue_pokemon.name }}">
+
+            <button type="submit" name="choice" value="fight" class="btn btn-danger btn-lg">⚔️ Fight</button>
+            <button type="submit" name="choice" value="flee" class="btn btn-secondary btn-lg">🏃‍♂️ Flee</button>
+          </form>
+        </div>
+
+        <div class="col-md-5">
+          <div class="card border-primary">
+            <div class="card-header bg-primary text-white text-center">
+              Enemy Pokémon
+            </div>
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ blue_pokemon.name }}</h5>
+              <p class="card-text">Species: {{ blue_pokemon.species }}</p>
+              <p class="card-text">❤️ HP: {{ blue_pokemon.hp }}</p>
+              <p class="card-text">⭐ XP: {{ blue_pokemon.xp }}</p>
+              <p class="card-text">😄 Mood: {{ blue_pokemon.mood }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
