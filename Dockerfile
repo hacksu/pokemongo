@@ -1,32 +1,24 @@
-# Will perform an automatic docker pull
-# to link the image that will be used throughout
-# this Dockerfile
-
 # argument that creates a env variable the docker uses
 # example: docker build --build-arg PASSWORD=supersecurepassword123 -t image_name .
-ARG PASSWORD
-ENV PASSWORD=${PASSWORD}
-
 FROM mongo:latest
 
-# Sets the working directory for any command
-# that follows it in the Dockerfile
+ARG PASSWORD
+
+# mongo env vars
+ENV MONGO_INITDB_ROOT_USERNAME=admin
+ENV MONGO_INITDB_ROOT_PASSWORD=${PASSWORD}
+
+# set up app file structure
 WORKDIR /
 
-# RUN executes system commands during the building process
-# (useful for installing system packages)
-RUN apt-get update && apt-get install -y sudo
-RUN apt install -y systemctl python3 python3-venv
+EXPOSE 27017
 
-# create python app location in the docker
-CMD [ "python3", "-m", "venv", "app" ]
+COPY pokemon_data /data
 
-# COPY will copy specified localhost files onto the docker
-COPY ./src /app/src
-COPY ./pokemon_data /app/data
-
+# prep bash init script
 COPY init.sh /root/init.sh
-RUN chmod +x /root/init.sh # bash files need to be set as executable
+# bash files you want to execute need to be set as executable
+RUN chmod +x /root/init.sh
 
 # Commands that will be executed after the build process
 CMD [ "/bin/bash", "/root/init.sh" ]

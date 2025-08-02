@@ -1,42 +1,32 @@
 #!/bin/bash
 
+# safely bash flag
+set -e
+
 # Local variable
-$DB_NAME=pokemon
+DB_NAME=pokemon
 
-cd /app
-
-# Enter venv session
-source ./bin/activate
-
-# Install python dependencies
-cd src
-pip install -r requirements.txt
-
-# Start MongoDB in the background if it's not already running
 mongod --bind_ip 0.0.0.0 --fork --logpath /var/log/mongod.log
 
-# Wait for MongoDB to be ready (adjust the sleep time if needed)
-sleep 10
+# Create the pokedex collection from existing JSON file
+mongoimport --db $DB_NAME --collection pokedex --file /data/pokedex.json --jsonArray
 
-# Connect to mongodb and set up an initial state
+# Create the PC collection from existing JSON file
+mongoimport --db $DB_NAME --collection pc --file /data/extra_pc_pokemon.json --jsonArray
+
+# Setup authentication
 mongosh <<EOF
-use $DB_NAME
-
+use admin
 db.createUser({
-    user: "admin",
-    pwd: "$PASSWORD",
-    roles: [{ role: "readWrite", db: "$DB_NAME" }]
+    user: "$MONGO_INITDB_ROOT_USERNAME",
+    pwd: "$MONGO_INITDB_ROOT_PASSWORD",
+    roles: [{ role: "root", db: "admin" }]
 })
 EOF
 
-# Create the pokedex collection from existing JSON file
-mongoimport --db $DB_NAME --collection pokedex --file /app/data/pokedex.json --jsonArray
-
-# Create the PC collection from existing JSON file
-mongoimport --db $DB_NAME --collection pc --file /app/data/extra_pc_pokemon.json --jsonArray
-
-# Start Flask App
-python3 app.py
+# Stop mongod to restart with auth for security
+mongod --shutdown
+mongod --bind_ip 0.0.0.0 --auth --fork --logpath /var/log/mongod.log
 
 # Keep container alive
 # (WITH OUT THIS THE CONTAINER WILL CLOSE INSTANTLY)
