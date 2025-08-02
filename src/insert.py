@@ -10,7 +10,7 @@ collection = db.pc
 # each insert will create a new object entry with a new ObjectId
 # if duplicate protection is needed you need to add extra checks
 insertResult = collection.insert_one({
-  "name": "Squinchy",
+  "name": "Delozier",
   "species": "Wartortle",
   "hp": 100,   # important
   "xp": 0,     # important
@@ -21,6 +21,6 @@ print(insertResult)
 
 # show insertion is present
 findResult = list(collection.find({
-  "name": "Squinchy"
+  "name": "Delozier"
 }))
 print(findResult)
