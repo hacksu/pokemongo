@@ -6,13 +6,31 @@ set -e
 # Local variable
 DB_NAME=pokemon
 
+# Start MongoDB without auth
 mongod --bind_ip 0.0.0.0 --fork --logpath /var/log/mongod.log
 
-# Create the pokedex collection from existing JSON file
-mongoimport --db $DB_NAME --collection pokedex --file /data/pokedex.json --jsonArray
+# Function to check if a collection is empty
+is_collection_empty() {
+  local collection=$1
+  local count=$(mongosh --quiet --eval "db.getSiblingDB('$DB_NAME').$collection.countDocuments({})")
+  [[ "$count" -eq 0 ]]
+}
 
-# Create the PC collection from existing JSON file
-mongoimport --db $DB_NAME --collection pc --file /data/extra_pc_pokemon.json --jsonArray
+# Import pokedex if empty
+if is_collection_empty "pokedex"; then
+  echo "Importing pokedex.json..."
+  mongoimport --db $DB_NAME --collection pokedex --file /data/pokedex.json --jsonArray
+else
+  echo "Skipping pokedex import — collection already populated."
+fi
+
+# Import PC if empty
+if is_collection_empty "pc"; then
+  echo "Importing extra_pc_pokemon.json..."
+  mongoimport --db $DB_NAME --collection pc --file /data/extra_pc_pokemon.json --jsonArray
+else
+  echo "Skipping PC import — collection already populated."
+fi
 
 # Setup authentication
 mongosh <<EOF
@@ -24,10 +42,9 @@ db.createUser({
 })
 EOF
 
-# Stop mongod to restart with auth for security
+# Restart mongod with auth enabled
 mongod --shutdown
 mongod --bind_ip 0.0.0.0 --auth --fork --logpath /var/log/mongod.log
 
 # Keep container alive
-# (WITH OUT THIS THE CONTAINER WILL CLOSE INSTANTLY)
 tail -f /dev/null
