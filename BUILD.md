@@ -14,9 +14,9 @@ docker.io
 cd pokemongo
 
 # Build the custom mongodb docker image
-docker build --build-arg PASSWORD=password123 -t pokemongo .
+sudo docker build --build-arg PASSWORD=password123 -t pokemongo .
 # Run the image locally
-docker run -d --name pokemongo_db -p 27017:27017 pokemongo
+sudo docker run -d --name pokemongo_db -p 27017:27017 pokemongo
 
 # Build VENV for flask app interface to interact with the mongodb docker
 python3 -m venv venv
