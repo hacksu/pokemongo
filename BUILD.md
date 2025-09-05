@@ -22,7 +22,7 @@ sudo docker run -d --name pokemongo_db -p 27017:27017 pokemongo
 python3 -m venv venv
 source venv/bin/activate
 # install python packages
-pip install pymongo flask
+pip install -r requirements.txt
 
 # run flask server
 python3 src/app.py
