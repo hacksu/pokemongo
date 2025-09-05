@@ -1,1 +1,0 @@
-run the code in setup.js in the MongoDB shell to create a user with limited permissions that the attendees can log in as if running this lesson again in the future. permission_tests.py just goes through to make sure the permission restrictions are working.
