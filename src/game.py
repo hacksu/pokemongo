@@ -1,14 +1,17 @@
 from pymongo import MongoClient
 from random import randrange
+import json
 
 # mongodb credential
 cred="admin:password123"
 
 client = MongoClient(f"mongodb://{cred}@localhost:27017")
 db = client.pokemon
+db2 = client.trainers
 
 pc_collection = db.pc
 pokedex_collection = db.pokedex
+trainers = db2.trainers # mongo database trainers has a collection called trainers
 
 # returns the entire pokedex collection as a list
 def get_pokedex():
@@ -19,6 +22,43 @@ def get_pokedex():
 def get_pc():
     pc_data = list(pc_collection.find({}))
     return pc_data
+
+# takes username and password to perform a noSQL query
+def query_trainer(user_,pass_):
+    try:
+        user_val = json.loads(user_) # convert to JSON object
+    except json.JSONDecodeError:
+        user_val = str(user_) # fallback to string
+
+    try:
+        pass_val = json.loads(pass_)
+    except json.JSONDecodeError:
+        pass_val = str(pass_)
+
+    query_result = list(trainers.find({
+        "username": user_val,
+        "password": pass_val
+    }))
+
+    print(f"[!] QUERY -> trainers.find({{ \"username\": {user_}, \"password\": {pass_}}})")
+    # print(f'[*] result > {query_result}')
+    # data = list(trainers.find({}))
+    # print(f' |___collection > {data}')
+
+    # imitating mongoDB findOne result
+    if len(query_result) == 1:
+        # found a result
+        query_result = {
+            "message":"Success!"
+        }
+    else:
+        # nothing found
+        query_result = {
+            "message":"Error!",
+            "query_result":query_result
+        }
+
+    return query_result
 
 def get_pokemon_from_name(name):
     result = list(pc_collection.find({"name":name}))

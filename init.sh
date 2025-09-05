@@ -42,6 +42,25 @@ db.createUser({
 })
 EOF
 
+# Setup data for nosql showcase
+mongosh <<EOF
+use trainers
+db.trainers.insertMany([
+  {
+    username: "ash",
+    password: "pikachu123"
+  },
+  {
+    username: "misty",
+    password: "waterqueen"
+  },
+  {
+    username: "brock",
+    password: "onixrocks"
+  }
+])
+EOF
+
 # Restart mongod with auth enabled
 mongod --shutdown
 mongod --bind_ip 0.0.0.0 --auth --fork --logpath /var/log/mongod.log
